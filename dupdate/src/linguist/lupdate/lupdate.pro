@@ -1,11 +1,7 @@
 option(host_build)
 QT = core-private
 
-qtHaveModule(qmldevtools) {
-    QT += qmldevtools-private
-} else {
-    DEFINES += QT_NO_QML
-}
+QT += qmldevtools-private
 
 DEFINES += QT_NO_CAST_TO_ASCII QT_NO_CAST_FROM_ASCII
 
@@ -21,7 +17,7 @@ SOURCES += \
     java.cpp \
     ui.cpp
 
-qtHaveModule(qmldevtools): SOURCES += qdeclarative.cpp
+SOURCES += qdeclarative.cpp
 
 HEADERS += \
     lupdate.h \
