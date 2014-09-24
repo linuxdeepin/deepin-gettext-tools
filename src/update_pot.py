@@ -66,8 +66,6 @@ def update_pot():
                 py_source_files.append(os.path.join(root, each_file))
 
     pot_filepath = os.path.join(locale_dir, project_name + ".pot")
-    if os.path.exists(pot_filepath):
-        os.remove(pot_filepath)
 
     if include_qml:
         ts_filepath = os.path.join(locale_dir, project_name + ".ts")
@@ -93,6 +91,10 @@ def update_pot():
             fp.write(clean_str)
 
     # Merge pot file.
+    if len(py_source_files) == 0:
+        blank_py_path = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)), "blank.py")
+        py_source_files.append(blank_py_path)
     if os.path.exists(pot_filepath):
         command = "xgettext -j -k_ -o %s %s" % (pot_filepath, ' '.join(py_source_files))
     else:

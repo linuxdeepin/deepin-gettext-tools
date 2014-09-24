@@ -22,6 +22,7 @@
 
 import subprocess
 import os
+import sys
 import argparse
 from ConfigParser import RawConfigParser as ConfigParser
 
@@ -46,7 +47,7 @@ def main():
                 shell=True
                 )
 
-            subprocess.call(
+            subprocess.check_call(
                 "msgfmt -o %s %s" % (mo_path, po_path),
                 shell=True
                 )
@@ -58,6 +59,8 @@ def main():
                         "/usr/share/locale/"),
                     shell=True
                     )
+    return 0
+
 def valid_path(string):
     """
     check if the path entered is a valid one
@@ -81,4 +84,4 @@ if __name__ == "__main__":
     config_path = args.file
     copy = args.no_copy
 
-    main()
+    sys.exit(main())
