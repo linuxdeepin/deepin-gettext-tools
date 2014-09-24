@@ -72,7 +72,7 @@ def update_pot():
 
         # Generate ts file
         subprocess.call(
-            "deepin-lupdate -recursive %s -ts %s" % (os.path.realpath(source_dir), ts_filepath),
+            "deepin-lupdate -locations relative -recursive %s -ts %s" % (os.path.realpath(source_dir), ts_filepath),
             shell=True)
 
         # convert to pot file.
