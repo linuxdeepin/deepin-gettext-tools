@@ -26,8 +26,12 @@ import sys
 import argparse
 from ConfigParser import RawConfigParser as ConfigParser
 
-def main():
+def main(args):
     # Read config options.
+
+    config_path = args.file
+    copy = args.copy
+
     config_parser = ConfigParser()
     config_parser.read(config_path)
     config_dir = os.path.dirname(os.path.realpath(config_path))
@@ -77,11 +81,8 @@ if __name__ == "__main__":
     parser.add_argument('file',metavar='file',
         type=valid_path,
         help='A valid ini config path, full or local.')
-    parser.add_argument('--nocopy', dest='no_copy', action='store_false',
-        help='Stop execute "sudo cp *.mo /usr/share/locale"')
+    parser.add_argument('--copy', dest='copy', action='store_true',
+        help='Execute "sudo cp *.mo /usr/share/locale"')
 
     args = parser.parse_args()
-    config_path = args.file
-    copy = args.no_copy
-
-    sys.exit(main())
+    sys.exit(main(args))
