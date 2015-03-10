@@ -58,12 +58,17 @@ def update_pot():
     # Get input arguments.
     include_qml = False
     py_source_files = []
+    go_source_files = []
     for root, dirs, files in os.walk(source_dir):
         for each_file in files:
+            if each_file.startswith("."):
+                continue
             if each_file.endswith(".qml") and not include_qml:
                 include_qml = True
-            if each_file.endswith(".py") and not each_file.startswith("."):
+            if each_file.endswith(".py"):
                 py_source_files.append(os.path.join(root, each_file))
+            elif each_file.endswith(".go"):
+                go_source_files.append(os.path.join(root, each_file))
 
     pot_filepath = os.path.join(locale_dir, project_name + ".pot")
 
@@ -91,15 +96,19 @@ def update_pot():
             fp.write(clean_str)
 
     # Merge pot file.
-    if len(py_source_files) == 0:
-        blank_py_path = os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), "blank.py")
-        py_source_files.append(blank_py_path)
-    if os.path.exists(pot_filepath):
-        command = "xgettext -j -k_ -o %s %s" % (pot_filepath, ' '.join(py_source_files))
-    else:
-        command = "xgettext -k_ -o %s %s" % (pot_filepath, ' '.join(py_source_files))
-    subprocess.call(command, shell=True)
+    if len(py_source_files) > 0:
+        if os.path.exists(pot_filepath):
+            command = "xgettext -j -F -k_ -o %s %s" % (pot_filepath, ' '.join(py_source_files))
+        else:
+            command = "xgettext -F -k_ -o %s %s" % (pot_filepath, ' '.join(py_source_files))
+        subprocess.call(command, shell=True)
+
+    if len(go_source_files) > 0:
+        if os.path.exists(pot_filepath):
+            command = "xgettext -j -F --from-code=utf-8 -C -kTr -o %s %s" % (pot_filepath, ' '.join(go_source_files))
+        else:
+            command = "xgettext -F --from-code=utf-8 -C -kTr -o %s %s" % (pot_filepath, ' '.join(go_source_files))
+        subprocess.call(command, shell=True)
 
 def valid_path(string):
     """
