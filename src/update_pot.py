@@ -20,10 +20,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
-import os
 import argparse
 from ConfigParser import RawConfigParser as ConfigParser
+import os
+import re
+import subprocess
 
 def remove_directory(path):
     """equivalent to command `rm -rf path`"""
@@ -51,33 +52,38 @@ def update_pot():
     config_dir = os.path.dirname(os.path.realpath(config_path))
     os.chdir(config_dir)
     project_name = config_parser.get("locale", "project_name")
-    source_dir = config_parser.get("locale", "source_dir")
+
+    # Source dirs are separated by blank chars
+    source_dirs = re.split('\s+', config_parser.get("locale", "source_dir"))
+
     locale_dir = os.path.abspath(config_parser.get("locale", "locale_dir"))
     create_directory(locale_dir)
+
+    pot_filepath = os.path.join(locale_dir, project_name + ".pot")
 
     # Get input arguments.
     include_qml = False
     py_source_files = []
     go_source_files = []
-    for root, dirs, files in os.walk(source_dir):
-        for each_file in files:
-            if each_file.startswith("."):
-                continue
-            if each_file.endswith(".qml") and not include_qml:
-                include_qml = True
-            if each_file.endswith(".py"):
-                py_source_files.append(os.path.join(root, each_file))
-            elif each_file.endswith(".go"):
-                go_source_files.append(os.path.join(root, each_file))
-
-    pot_filepath = os.path.join(locale_dir, project_name + ".pot")
+    for source_dir in source_dirs:
+        for root, dirs, files in os.walk(source_dir):
+            for each_file in files:
+                if each_file.startswith("."):
+                    continue
+                if each_file.endswith(".qml") and not include_qml:
+                    include_qml = True
+                if each_file.endswith(".py"):
+                    py_source_files.append(os.path.join(root, each_file))
+                elif each_file.endswith(".go"):
+                    go_source_files.append(os.path.join(root, each_file))
 
     if include_qml:
         ts_filepath = os.path.join(locale_dir, project_name + ".ts")
 
         # Generate ts file
+        ts_source_dirs = ' '.join(os.path.realpath(source_dir) for source_dir in source_dirs)
         subprocess.call(
-            "deepin-lupdate -locations relative -recursive %s -ts %s" % (os.path.realpath(source_dir), ts_filepath),
+            "deepin-lupdate -locations relative -recursive %s -ts %s" % (ts_source_dirs, ts_filepath),
             shell=True)
 
         # convert to pot file.
