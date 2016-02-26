@@ -1,29 +1,18 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2011 ~ 2014 Deepin, Inc.
-#               2011 ~ 2014 Kaisheng Ye
+# Copyright (C) 2015 Deepin Technology Co., Ltd.
 #
-# Author:     Kaisheng Ye <kaisheng.ye@gmail.com>
-# Maintainer: Kaisheng Ye <kaisheng.ye@gmail.com>
-#
-# This program is free software: you can redistribute it and/or modify
+# This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
 
-import subprocess
-import os
 import argparse
 from ConfigParser import RawConfigParser as ConfigParser
+import os
+import re
+import subprocess
 
 def remove_directory(path):
     """equivalent to command `rm -rf path`"""
@@ -51,33 +40,38 @@ def update_pot():
     config_dir = os.path.dirname(os.path.realpath(config_path))
     os.chdir(config_dir)
     project_name = config_parser.get("locale", "project_name")
-    source_dir = config_parser.get("locale", "source_dir")
+
+    # Source dirs are separated by blank chars
+    source_dirs = re.split('\s+', config_parser.get("locale", "source_dir"))
+
     locale_dir = os.path.abspath(config_parser.get("locale", "locale_dir"))
     create_directory(locale_dir)
+
+    pot_filepath = os.path.join(locale_dir, project_name + ".pot")
 
     # Get input arguments.
     include_qml = False
     py_source_files = []
     go_source_files = []
-    for root, dirs, files in os.walk(source_dir):
-        for each_file in files:
-            if each_file.startswith("."):
-                continue
-            if each_file.endswith(".qml") and not include_qml:
-                include_qml = True
-            if each_file.endswith(".py"):
-                py_source_files.append(os.path.join(root, each_file))
-            elif each_file.endswith(".go"):
-                go_source_files.append(os.path.join(root, each_file))
-
-    pot_filepath = os.path.join(locale_dir, project_name + ".pot")
+    for source_dir in source_dirs:
+        for root, dirs, files in os.walk(source_dir):
+            for each_file in files:
+                if each_file.startswith("."):
+                    continue
+                if each_file.endswith(".qml") and not include_qml:
+                    include_qml = True
+                if each_file.endswith(".py"):
+                    py_source_files.append(os.path.join(root, each_file))
+                elif each_file.endswith(".go"):
+                    go_source_files.append(os.path.join(root, each_file))
 
     if include_qml:
         ts_filepath = os.path.join(locale_dir, project_name + ".ts")
 
         # Generate ts file
+        ts_source_dirs = ' '.join(os.path.realpath(source_dir) for source_dir in source_dirs)
         subprocess.call(
-            "deepin-lupdate -locations relative -recursive %s -ts %s" % (os.path.realpath(source_dir), ts_filepath),
+            "deepin-lupdate -locations relative -recursive %s -ts %s" % (ts_source_dirs, ts_filepath),
             shell=True)
 
         # convert to pot file.
