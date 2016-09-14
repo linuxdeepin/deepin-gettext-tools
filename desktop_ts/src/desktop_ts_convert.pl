@@ -18,7 +18,7 @@ my $xmlPP = XML::LibXML::PrettyPrint->new(
 );
 
 MAIN: {
-    my $cmd = shift @ARGV;
+    my $cmd = shift @ARGV // '';
     if ($cmd eq 'desktop2ts') {
         my ($desktopFile, $outputTsDir) = @ARGV;
         Desktop2TS($desktopFile, $outputTsDir);
@@ -27,7 +27,25 @@ MAIN: {
     } elsif ( $cmd eq 'ts2desktop' ) {
         my ($desktopFile, $tsDir, $outputDesktopFile) = @ARGV;
         TS2Desktop($desktopFile, $tsDir, $outputDesktopFile);
+        exit;
+    } else {
+        printHelp();
+        exit;
     }
+}
+
+sub printHelp {
+    my $bin = basename($0);
+    print "
+Usage:
+desktop -> ts:
+
+$bin desktop2ts \$desktopFile \$outputTsDir
+
+ts -> desktop:
+
+$bin ts2desktop \$desktopFile \$tsDir \$outputDesktopFile
+"
 }
 
 sub Desktop2TS {
