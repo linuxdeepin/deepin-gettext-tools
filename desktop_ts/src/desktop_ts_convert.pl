@@ -325,16 +325,16 @@ sub printDesktop {
         say $fh "[$section]";
         my $sectionHash = $desktopCfg->{$section};
 
-        my (@noTsLeys, @tsKeys);
+        my (@noTsKeys, @tsKeys);
         for (sort keys %$sectionHash) {
             if (/\[\w+\]/) {
                 push @tsKeys, $_;
             } else {
-                push @noTsLeys, $_;
+                push @noTsKeys, $_;
             }
         }
 
-        printSectionKeys($fh, $sectionHash, \@noTsLeys);
+        printSectionKeys($fh, $sectionHash, \@noTsKeys);
 
         if (@tsKeys) {
             say $fh "\n# Translations:\n# Do not manually modify!";
@@ -348,6 +348,7 @@ sub printSectionKeys {
     my ($fh, $sectionHash, $keys) = @_;
     for my $key ( @$keys ) {
         my $value = $sectionHash->{$key};
+        $value =~ s/\n/ /g;
         say $fh "$key=$value"
             if $value;
     }
