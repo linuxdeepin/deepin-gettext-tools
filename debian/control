@@ -11,5 +11,5 @@ Maintainer: Deepin Sysdev <sysdev@deepin.com>
 
 Package: deepin-gettext-tools
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python, perl, perl-modules, libxml-libxml-perl, libxml-libxml-prettyprint-perl, libconfig-tiny-perl
+Depends: ${shlibs:Depends}, ${misc:Depends}, python, python3, perl, perl-modules, libxml-libxml-perl, libxml-libxml-prettyprint-perl, libconfig-tiny-perl
 Description: Deepin Internationalization utilities
