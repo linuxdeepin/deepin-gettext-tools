@@ -9,7 +9,7 @@ use Config::Tiny;
 use File::Basename qw(basename);
 use File::Path qw(make_path);
 
-my @localeKeys = qw(Name GenericName Comment);
+my @localeKeys = qw(Name GenericName Comment Keywords);
 my $xmlPP = XML::LibXML::PrettyPrint->new(
     indent_string => ' 'x4,
     element => {
@@ -19,36 +19,55 @@ my $xmlPP = XML::LibXML::PrettyPrint->new(
 
 MAIN: {
     my $cmd = shift @ARGV // '';
-    if ($cmd eq 'desktop2ts') {
+    if ($cmd eq 'init') {
+        my ($desktopFile, $outputTsDir) = @ARGV;
+        Init($desktopFile, $outputTsDir);
+    } elsif ($cmd eq 'desktop2ts') {
         my ($desktopFile, $outputTsDir) = @ARGV;
         Desktop2TS($desktopFile, $outputTsDir);
-        exit;
-    
     } elsif ( $cmd eq 'ts2desktop' ) {
         my ($desktopFile, $tsDir, $outputDesktopFile) = @ARGV;
         TS2Desktop($desktopFile, $tsDir, $outputDesktopFile);
-        exit;
     } else {
         printHelp();
-        exit;
     }
+    exit;
 }
 
 sub printHelp {
     my $bin = basename($0);
     print "
 Usage:
-desktop -> ts:
+init:
+$bin init \$desktopFile \$outputTsDir
+output source \$outputTsDir/desktop.ts and translation \$outputTsDir/desktop_<lang>.ts
 
+desktop -> ts:
 $bin desktop2ts \$desktopFile \$outputTsDir
+output source \$outputTsDir/desktop.ts
 
 ts -> desktop:
-
 $bin ts2desktop \$desktopFile \$tsDir \$outputDesktopFile
 "
 }
 
 sub Desktop2TS {
+    my ($file, $outputTsDir) = @_;
+    my $contextName = 'desktop';
+    my $desktopCfg = Config::Tiny->read($file, 'utf8');
+    my $dom = createDocument();
+    my $root = $dom->documentElement;
+    my $context = getEmptyContext($dom, $contextName);
+    my @msgs = createDesktopTsMessages($dom, $desktopCfg);
+    $context->appendChild($_) for @msgs;
+    # source
+    make_path($outputTsDir);
+    my $outputTsFile = "$outputTsDir/desktop.ts";
+    say "output ts file: ", $outputTsFile;
+    saveDocument($dom, $outputTsFile, 1);
+}
+
+sub Init {
     my ($file, $outputTsDir) = @_;
     my $contextName = 'desktop';
     my $desktopCfg = Config::Tiny->read($file, 'utf8');
