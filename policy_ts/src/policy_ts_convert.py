@@ -207,7 +207,7 @@ def indent(elem, level=0, more_sibs=False):
 def write_xml(root, filename, header):
     indent(root)
     content = ET.tostring(root, encoding="unicode")
-    with open(filename, 'w') as f:
+    with open(filename, 'w', encoding="utf-8") as f:
         f.write(header)
         f.write(content)
 
