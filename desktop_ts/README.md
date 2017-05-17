@@ -27,18 +27,18 @@ deepin-desktop-ts-convert ts2desktop $desktopFile $tsDir $outputDesktopFile
 
 ## 推荐使用流程
 ### 开始一个新项目
-如果 desktop 文件中已有翻译，使用 init 子命令，否则使用 deskotp2ts 子命令；
-将 desktop 文件的后缀改为 `.desktop.in` 作为一个模板，去除里面的翻译；
-在 Makefile 里面写一个构建项 ts，当 desktop.in 文件中相关字段的值更新后，执行 make ts；
-在 .tx/config 写好资源配置；
-在 Makefile 中的 build 项中增加使用 ts2desktop 子命令；
-用 ci 的 [sync-transifex](https://ci.deepin.io/view/tools/job/sync-transifex/) 上传翻译源文件；
-如果已有一些翻译成果，找翻译管理员，`git clone` 你的项目，然后执行 `tx push -t` 命令上传翻译，tx 命令由软件包 transifex-client 提供；
+1. 如果 desktop 文件中已有翻译，使用 init 子命令，否则使用 deskotp2ts 子命令；
+2. 将 desktop 文件的后缀改为 `.desktop.in` 作为一个模板，去除里面的翻译；
+3. 在 Makefile 里面写一个构建项 ts，当 desktop.in 文件中相关字段的值更新后，执行 make ts；
+4. 在 .tx/config 写好资源配置；
+5. 在 Makefile 中的 build 项中增加使用 ts2desktop 子命令；
+6. 用 ci 的 [sync-transifex](https://ci.deepin.io/view/tools/job/sync-transifex/) 上传翻译源文件；
+7. 如果已有一些翻译成果，找翻译管理员，`git clone` 你的项目，然后执行 `tx push -t` 命令上传翻译，tx 命令由软件包 transifex-client 提供；
 
 ### 更新翻译成果
-用 ci 的 sync-transifex 拉取翻译结果
+1. 用 ci 的 sync-transifex 拉取翻译结果
 
 ### 更新模板文件 desktop.in，修改了本地化相关字段
-使用 desktop2ts 子命令；
-将模板文件 desktop.in 和它的翻译源文件 desktop.ts 在 git 中提交；
-用 ci 的 sync-transifex 上传翻译源文件；
+1. 使用 desktop2ts 子命令；
+2. 将模板文件 desktop.in 和它的翻译源文件 desktop.ts 在 git 中提交；
+3. 用 ci 的 sync-transifex 上传翻译源文件；
