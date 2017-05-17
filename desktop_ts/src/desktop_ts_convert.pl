@@ -48,6 +48,8 @@ output source \$outputTsDir/desktop.ts
 
 ts -> desktop:
 $bin ts2desktop \$desktopFile \$tsDir \$outputDesktopFile
+
+document https://github.com/linuxdeepin/deepin-gettext-tools/blob/master/desktop_ts/README.md
 "
 }
 
