@@ -14,26 +14,7 @@ import os
 import re
 import subprocess
 
-def remove_directory(path):
-    """equivalent to command `rm -rf path`"""
-    if os.path.exists(path):
-        for i in os.listdir(path):
-            full_path = os.path.join(path, i)
-            if os.path.isdir(full_path):
-                remove_directory(full_path)
-            else:
-                os.remove(full_path)
-        os.rmdir(path)
-
-def create_directory(directory, remove_first=False):
-    '''Create directory.'''
-    if remove_first and os.path.exists(directory):
-        remove_directory(directory)
-
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-def update_pot():
+def update_pot(config_path):
     # Read config options.
     config_parser = ConfigParser()
     config_parser.read(config_path)
@@ -45,9 +26,12 @@ def update_pot():
     source_dirs = re.split('\s+', config_parser.get("locale", "source_dir"))
 
     locale_dir = os.path.abspath(config_parser.get("locale", "locale_dir"))
-    create_directory(locale_dir)
+    if not os.path.exists(locale_dir):
+        os.makedirs(locale_dir)
 
     pot_filepath = os.path.join(locale_dir, project_name + ".pot")
+    if os.path.exists(pot_filepath):
+        os.remove(pot_filepath)
 
     # Get input arguments.
     include_qml = False
@@ -55,15 +39,15 @@ def update_pot():
     go_source_files = []
     for source_dir in source_dirs:
         for root, dirs, files in os.walk(source_dir):
-            for each_file in files:
-                if each_file.startswith("."):
+            for f in files:
+                if f.startswith("."):
                     continue
-                if each_file.endswith(".qml") and not include_qml:
+                if f.endswith(".qml") and not include_qml:
                     include_qml = True
-                if each_file.endswith(".py"):
-                    py_source_files.append(os.path.join(root, each_file))
-                elif each_file.endswith(".go"):
-                    go_source_files.append(os.path.join(root, each_file))
+                if f.endswith(".py"):
+                    py_source_files.append(os.path.join(root, f))
+                elif f.endswith(".go"):
+                    go_source_files.append(os.path.join(root, f))
 
     if include_qml:
         ts_filepath = os.path.join(locale_dir, project_name + ".ts")
@@ -89,20 +73,21 @@ def update_pot():
         with open(pot_filepath, "wb") as fp:
             fp.write(clean_str)
 
-    # Merge pot file.
     if len(py_source_files) > 0:
-        if os.path.exists(pot_filepath):
-            command = "xgettext -j -F -k_ -o %s %s" % (pot_filepath, ' '.join(py_source_files))
-        else:
-            command = "xgettext -F -k_ -o %s %s" % (pot_filepath, ' '.join(py_source_files))
-        subprocess.call(command, shell=True)
+        gen_pot(pot_filepath, ['-k_'], py_source_files)
 
     if len(go_source_files) > 0:
-        if os.path.exists(pot_filepath):
-            command = "xgettext -j -F --from-code=utf-8 -C -kTr -o %s %s" % (pot_filepath, ' '.join(go_source_files))
-        else:
-            command = "xgettext -F --from-code=utf-8 -C -kTr -o %s %s" % (pot_filepath, ' '.join(go_source_files))
-        subprocess.call(command, shell=True)
+        gen_pot(pot_filepath, ['-kTr', '-C', '--from-code=utf-8'], go_source_files)
+
+def gen_pot(output, args, source_files):
+    callargs = ['xgettext', '-F', '-o', output]
+    if os.path.exists(output):
+        # join messages with existing file
+        callargs.append('-j')
+    callargs.extend(args)
+    #print callargs
+    callargs.extend(source_files)
+    subprocess.call(callargs)
 
 def valid_path(string):
     """
@@ -122,6 +107,5 @@ if __name__ == "__main__":
         help='A valid ini config path, full or local.')
 
     args = parser.parse_args()
-    config_path = args.file
-    update_pot()
+    update_pot(args.file)
 
