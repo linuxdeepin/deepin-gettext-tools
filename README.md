@@ -9,6 +9,10 @@ Currently supported languages: Python, QML, Go lang
 * python
 * qtbase5
 * qtdeclarative5
+* perl
+* Config-Tiny
+* XML-LibXML
+* XML-LibXML-PrettyPrint
 
 ## Installation
 
