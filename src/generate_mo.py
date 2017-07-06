@@ -12,7 +12,11 @@ import subprocess
 import os
 import sys
 import argparse
-from ConfigParser import RawConfigParser as ConfigParser
+
+try:
+    from configparser import RawConfigParser as ConfigParser
+except ImportError:
+    from ConfigParser import RawConfigParser as ConfigParser
 
 def main(args):
     # Read config options.

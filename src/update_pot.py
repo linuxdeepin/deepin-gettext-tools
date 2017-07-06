@@ -9,10 +9,14 @@
 # (at your option) any later version.
 
 import argparse
-from ConfigParser import RawConfigParser as ConfigParser
 import os
 import re
 import subprocess
+
+try:
+    from configparser import RawConfigParser as ConfigParser
+except ImportError:
+    from ConfigParser import RawConfigParser as ConfigParser
 
 def update_pot(config_path):
     # Read config options.
