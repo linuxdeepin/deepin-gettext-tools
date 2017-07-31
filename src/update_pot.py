@@ -37,8 +37,6 @@ def update_pot(config_path):
     if os.path.exists(pot_filepath):
         os.remove(pot_filepath)
 
-    # Get input arguments.
-    include_qml = False
     py_source_files = []
     go_source_files = []
     for source_dir in source_dirs:
@@ -46,36 +44,10 @@ def update_pot(config_path):
             for f in files:
                 if f.startswith("."):
                     continue
-                if f.endswith(".qml") and not include_qml:
-                    include_qml = True
                 if f.endswith(".py"):
                     py_source_files.append(os.path.join(root, f))
                 elif f.endswith(".go"):
                     go_source_files.append(os.path.join(root, f))
-
-    if include_qml:
-        ts_filepath = os.path.join(locale_dir, project_name + ".ts")
-
-        # Generate ts file
-        ts_source_dirs = ' '.join(os.path.realpath(source_dir) for source_dir in source_dirs)
-        subprocess.call(
-            "deepin-lupdate -locations relative -recursive %s -ts %s" % (ts_source_dirs, ts_filepath),
-            shell=True)
-
-        # convert to pot file.
-        subprocess.call(
-            "lconvert -i %s -o %s" % (ts_filepath, pot_filepath),
-            shell=True)
-
-        # clean string
-        clean_str = ""
-        with open(pot_filepath) as fp:
-            for line in fp:
-                if not line.startswith("msgctxt"):
-                    clean_str += line
-
-        with open(pot_filepath, "wb") as fp:
-            fp.write(clean_str)
 
     if len(py_source_files) > 0:
         gen_pot(pot_filepath, ['-k_'], py_source_files)
