@@ -1,15 +1,12 @@
 Source: deepin-gettext-tools
 Section: devel
 Priority: extra
-Build-Depends: debhelper (>= 9),
- qt5-default, qt5-qmake,
- libdouble-conversion-dev,
- qtbase5-private-dev,
- qtdeclarative5-private-dev
-Standards-Version: 3.9.5
 Maintainer: Deepin Sysdev <sysdev@deepin.com>
+Build-Depends: debhelper (>= 9),
+Standards-Version: 3.9.5
 
 Package: deepin-gettext-tools
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python, python3, perl, perl-modules, libxml-libxml-perl, libxml-libxml-prettyprint-perl, libconfig-tiny-perl
+Depends: ${shlibs:Depends}, ${misc:Depends}, python, python3, perl, libxml-libxml-perl, libconfig-tiny-perl
 Description: Deepin Internationalization utilities
+ Deepin Internationalization utilities

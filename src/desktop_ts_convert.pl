@@ -4,18 +4,11 @@ use strict;
 use 5.018;
 
 use XML::LibXML;
-use XML::LibXML::PrettyPrint;
 use Config::Tiny;
 use File::Basename qw(basename);
 use File::Path qw(make_path);
 
 my @localeKeys = qw(Name GenericName Comment Keywords);
-my $xmlPP = XML::LibXML::PrettyPrint->new(
-    indent_string => ' 'x4,
-    element => {
-        preserves_whitespace => [qw(name source translation)],  
-    },
-);
 
 MAIN: {
     my $cmd = shift @ARGV // '';
@@ -171,9 +164,6 @@ sub createDocument {
 sub saveDocument {
     my ($dom, $file, $pretty) = @_;
 
-    if ( $pretty ) {
-        $xmlPP->pretty_print($dom);
-    }
     open FH, '>', $file
         or die "failed to open file $file for write: $!";
     print FH $dom->toString;
