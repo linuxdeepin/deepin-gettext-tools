@@ -1,3 +1,9 @@
+deepin-gettext-tools (1.0.6-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Boyuan Yang <073plan@gmail.com>  Mon, 28 Aug 2017 15:11:02 +0800
+
 deepin-gettext-tools (1.0.3) unstable; urgency=low
 
   * Autobuild Tag 1.0.3 

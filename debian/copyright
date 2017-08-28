@@ -1,6 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: deepin-gettext-tools
 
+Files: *
 Copyright: 2010-2017 Deepin Technology Co., Ltd.
 License: GPL-3+
 
