@@ -143,13 +143,14 @@ def ts2policy(policyFile, tsDir, outputPolicyFile):
                 else:
                     src = action.desc_src
 
-                val = d[action.id + "!" + ty]
-                source = val[0]
-                translation = val[1]
-                if source == src and translation != "" and translation is not None:
-                    msg = ET.SubElement(action_elem, ty)
-                    msg.set("xml:lang", lang)
-                    msg.text = translation
+                val = d.get(action.id + "!" + ty)
+                if val != None:
+                    source = val[0]
+                    translation = val[1]
+                    if source == src and translation != "" and translation is not None:
+                        msg = ET.SubElement(action_elem, ty)
+                        msg.set("xml:lang", lang)
+                        msg.text = translation
 
     write_policy(tree.getroot(), outputPolicyFile)
 
