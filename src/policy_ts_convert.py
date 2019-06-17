@@ -41,7 +41,7 @@ class Action:
     def get_desc_src(self):
         if hasattr(self, "desc_src"):
             return create_ts_msg(self.desc_src, None, self.id, "description")
-        return ""
+        return None
 
     def get_msg_src(self):
         return create_ts_msg(self.msg_src, None, self.id, "message")
