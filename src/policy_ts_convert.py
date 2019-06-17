@@ -39,7 +39,9 @@ class Action:
                     self.descs[lang] = item.text
 
     def get_desc_src(self):
-        return create_ts_msg(self.desc_src, None, self.id, "description")
+        if hasattr(self, "desc_src"):
+            return create_ts_msg(self.desc_src, None, self.id, "description")
+        return None
 
     def get_msg_src(self):
         return create_ts_msg(self.msg_src, None, self.id, "message")
@@ -74,7 +76,8 @@ def policy2ts(policyFile, outputTsDir):
     ts, ctx = create_ts_doc()
     for action in actions:
         ctx.append(action.get_msg_src())
-        ctx.append(action.get_desc_src())
+        if action.get_desc_src():
+            ctx.append(action.get_desc_src())
     outputTsFile = outputTsDir + "/policy.ts"
     print("outputTsFile:", outputTsFile)
     write_ts(ts, outputTsFile)
