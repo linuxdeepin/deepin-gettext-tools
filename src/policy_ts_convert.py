@@ -144,7 +144,7 @@ def ts2policy(policyFile, tsDir, outputPolicyFile):
                 if ty == "message":
                     src = action.msg_src
                 else:
-                    src = action.desc_src
+                    src = action.desc_src if hasattr(action, 'desc_src') else None
 
                 val = d.get(action.id + "!" + ty)
                 if val != None:
