@@ -137,7 +137,7 @@ def ts2policy(policyFile, tsDir, outputPolicyFile):
 
     for action_elem in tree.iter("action"):
         action = Action(action_elem)
-        for lang in tr_dict:
+        for lang in sorted(tr_dict):
             d = tr_dict[lang]
             src = ""
             for ty in ["description", "message"]:
