@@ -14,7 +14,6 @@ Depends:
  libconfig-tiny-perl,
  libxml-libxml-perl,
  perl,
- python,
  python3,
  ${misc:Depends},
 Description: Deepin Internationalization utilities
