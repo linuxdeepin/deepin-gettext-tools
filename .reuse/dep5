@@ -33,7 +33,17 @@ Files: debian/* rpm/* archlinux/*
 Copyright: None
 License: CC0-1.0
 
-# scripts
-Files: src/*
+# py
+Files: src/*.py
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-2.0-or-later
+
+# ini
+Files: src/example_config.ini
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-2.0-or-later
+
+# pl
+Files: src/desktop_ts_convert.pl
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-2.0-or-later
