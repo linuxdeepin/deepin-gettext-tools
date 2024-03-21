@@ -1,3 +1,9 @@
+deepin-gettext-tools (1.0.11) unstable; urgency=medium
+
+  * update debian source format
+
+ -- hudeng <hudeng@deepin.org>  Thu, 21 Mar 2024 12:12:10 +0800
+
 deepin-gettext-tools (1.0.6-1) unstable; urgency=medium
 
   * New upstream release.
